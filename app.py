@@ -3,7 +3,6 @@ import image_slicer
 import os
 from PIL import Image
 import pytesseract
-import cv2
 import re
 
 app = Flask(__name__)
@@ -23,7 +22,7 @@ def upload_file():
 
 		for f in os.listdir("."):
 			if '.png' in f:
-				image = cv2.imread(f)
+				image = Image.open(f)
 				t = pytesseract.image_to_string(image, lang='eng')
 				text.append(t)
 
