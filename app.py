@@ -1,4 +1,5 @@
 from flask import Flask, request, json
+from pml import app
 import image_slicer
 import os
 from PIL import Image
@@ -38,5 +39,6 @@ def upload_file():
 
 
 if __name__ == "__main__":
-	app.run(host='0.0.0.0', port=$PORT, debug=True)
+	port = int(os.environ.get('PORT', 5000))
+	app.run(host='0.0.0.0', port=port)
 
