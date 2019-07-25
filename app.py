@@ -3,7 +3,8 @@ import image_slicer
 import os
 from PIL import Image
 import pytesseract
-import cv2
+#import cv2
+from .cv2 import *
 import re
 
 app = Flask(__name__)
