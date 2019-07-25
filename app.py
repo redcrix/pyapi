@@ -1,5 +1,4 @@
 from flask import Flask, request, json
-from pml import app
 import image_slicer
 import os
 from PIL import Image
@@ -8,6 +7,7 @@ import cv2
 import re
 
 app = Flask(__name__)
+
 
 @app.route('/', methods=['POST','GET'])
 def upload_file():
@@ -37,8 +37,8 @@ def upload_file():
 
 		return json.dumps({"dob": a})
 
+port = int(os.environ.get('PORT', 5000))
 
 if __name__ == "__main__":
-	port = int(os.environ.get('PORT', 5000))
 	app.run(host='0.0.0.0', port=port)
 
