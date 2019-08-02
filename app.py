@@ -11,10 +11,14 @@ app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 def upload_file():
 	if request.method == 'POST':
-		#print(request.files)
-		if 'file' not in request.files:
-			return "No file found"
-		file = request.files['file']
+
+		a = ""
+
+		print(request.files)
+		if 'file_idproof' not in request.files:
+			message="no file found"
+			return json.dumps({"message":message,"dob": a})
+		file = request.files['file_idproof']
 		file.save("a.jpg")
 
 		text=[]
@@ -26,7 +30,7 @@ def upload_file():
 				t = pytesseract.image_to_string(image, lang='eng')
 				text.append(t)
 
-		a = ""
+		
 		for i in range(len(text)):
 			try:
 				match = re.search(r'(\d+/\d+/\d+)', text[i]).group(1)
@@ -34,11 +38,15 @@ def upload_file():
 			except:
 				pass
 
-		return json.dumps({"dob": a})
+
+		if a=="":
+			message="id upload failed"
+		else:
+			message="id uploded successfully"
+		return json.dumps({"message":message,"dob": a})
 
 
 
 if __name__ == "__main__":
-	port = int(os.environ.get('PORT', 5000))
-	app.run(host='0.0.0.0', port=port)
+	app.run(debug=True)
 
