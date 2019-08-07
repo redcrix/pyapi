@@ -14,16 +14,12 @@ def upload_file():
 
 		a = ""
 
-		value=0
-
-		print(request.files['aid'])
-		if 'aid' not in request.files:
+		print(request.files)
+		if 'file_idproof' not in request.files:
 			message="no file found"
-			value=404
-			return json.dumps({"code":value,"message":message,"dob": a})
-		file = request.files['aid']
+			return json.dumps({"message":message,"dob": a})
+		file = request.files['file_idproof']
 		file.save("a.jpg")
-		idpic=str("https://www.pythonanywhere.com/user/redcrix/files/home/redcrix/a.jpg")
 
 		text=[]
 		image_slicer.slice("a.jpg", 10)
@@ -34,7 +30,7 @@ def upload_file():
 				t = pytesseract.image_to_string(image, lang='eng')
 				text.append(t)
 
-
+		
 		for i in range(len(text)):
 			try:
 				match = re.search(r'(\d+/\d+/\d+)', text[i]).group(1)
@@ -45,15 +41,12 @@ def upload_file():
 
 		if a=="":
 			message="id upload failed"
-			value=201
 		else:
 			message="id uploded successfully"
-			value=202
-		return json.dumps({"code":value,"img": idpic, "message":message,"dob": a})
+		return json.dumps({"message":message,"dob": a})
 
 
 
 if __name__ == "__main__":
 	app.run(debug=True)
-
 
