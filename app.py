@@ -4,6 +4,8 @@ import os
 from PIL import Image
 import pytesseract
 import re
+import shutil
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -11,33 +13,43 @@ app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 def upload_file():
 	if request.method == 'POST':
-
 		a = ""
-
 		value=0
-
-		print(request.files['aid'])
+		text=[]
 		if 'aid' not in request.files:
 			message="no file found"
 			value=404
-			return json.dumps({"code":value,"message":message,"dob": a})
+			return json.dumps({"code":value,"message":message})
 		file = request.files['aid']
+		idtype = str(request.form['idtype'])
 		file.save("a.jpg")
-		idpic=str("https://www.pythonanywhere.com/user/redcrix/files/home/redcrix/a.jpg")
-
-		text=[]
-		image_slicer.slice("a.jpg", 10)
-
-		for f in os.listdir("."):
-			if '.png' in f:
-				image = Image.open(f)
-				t = pytesseract.image_to_string(image, lang='eng')
-				text.append(t)
-
-
-		for i in range(len(text)):
+		for f in os.listdir("/home/redcrix/mysite/static/"):
+		    os.remove("/home/redcrix/mysite/static/"+f)
+		time = datetime.now().strftime("%d-%b-%Y_%H:%M:%S")
+		shutil.copy("a.jpg", "/home/redcrix/mysite/static/"+time+".jpg")
+		idpic=str("http://redcrix.pythonanywhere.com/static/"+time+".jpg")
+		image = Image.open("a.jpg")
+		t = pytesseract.image_to_string(image, lang='eng')
+		text.append(t)
+		for i in text:
 			try:
-				match = re.search(r'(\d+/\d+/\d+)', text[i]).group(1)
+				match = re.search(r'(\d+/\d+/\d+)', i).group(1)
+				a = match
+			except:
+				pass
+
+		if a=="":
+
+		    image_slicer.slice("a.jpg", 10)
+		    for f in os.listdir("."):
+    			if '.png' in f:
+    				image = Image.open(f)
+    				t = pytesseract.image_to_string(image, lang='eng')
+    				text.append(t)
+
+		for i in text:
+			try:
+				match = re.search(r'(\d+/\d+/\d+)', i).group(1)
 				a = match
 			except:
 				pass
@@ -49,11 +61,12 @@ def upload_file():
 		else:
 			message="id uploded successfully"
 			value=202
-		return json.dumps({"code":value,"img": idpic, "message":message,"dob": a})
+		return json.dumps({"text":text,"code":value,"img": idpic, "message":message,"dob": a})
+
+
 
 
 
 if __name__ == "__main__":
 	app.run(debug=True)
-
 
